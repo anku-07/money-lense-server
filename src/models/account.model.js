@@ -8,24 +8,79 @@ const accountSchema = new mongoose.Schema(
       required: [true, "Account must be associated with a user"],
     },
 
-    status: {
-      enum: {
-        values: ["ACTIVE", "FROZEN", "CLOSED"],
-        message: "Status can be ACTIVE,FROZEN OR CLOSED",
-      },
+    accountName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    type: {
+      type: String,
+      enum: ["bank", "wallet", "cash", "credit_card"],
+      required: true,
+    },
+
+    subType: {
+      type: String,
+      default: null,
+    },
+
+    bankName: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+
+    accountNumber: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+
+    ifscCode: {
+      type: String,
+      default: null,
+      trim: true,
+      uppercase: true,
+    },
+
+    upiId: {
+      type: String,
+      default: null,
+      trim: true,
+      lowercase: true,
     },
 
     currency: {
       type: String,
-      required: [true, "Currency is required"],
       default: "INR",
+    },
+
+    openingBalance: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    currentBalance: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    isDefault: {
+      type: Boolean,
+      default: false,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true },
 );
 
-accountSchema.index({ user: 1, status: 1 });
-
-const accountModel = mongoose.model("account", accountSchema);
+const accountModel = mongoose.model("Account", accountSchema);
 
 module.exports = accountModel;
