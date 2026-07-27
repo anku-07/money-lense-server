@@ -2,8 +2,6 @@ const accountService = require("../services/account.service");
 const asyncHandler = require("../utils/asyncHandler");
 
 const createAccount = asyncHandler(async (req, res) => {
-  console.log(req.user);
-
   const account = await accountService.createAccount(req.user._id, req.body);
 
   res.status(201).json({
