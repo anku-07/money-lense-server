@@ -22,8 +22,12 @@ const findAllAccountsByUser = async (userId) => {
   }).sort({ createdAt: -1 });
 };
 
-const findAccountById = async (id) => {
-  return await Account.findById(id);
+const findAccountById = async (id, userId) => {
+  return await Account.findOne({
+    _id: id,
+    user: userId,
+    isActive: true,
+  });
 };
 
 const updateAccount = async (id, payload) => {
@@ -31,6 +35,10 @@ const updateAccount = async (id, payload) => {
     new: true,
     runValidators: true,
   });
+};
+
+const updateManyAccounts = async (filter, payload) => {
+  return await Account.updateMany(filter, payload);
 };
 
 const archiveAccount = async (id) => {
@@ -41,7 +49,7 @@ const archiveAccount = async (id) => {
     },
     {
       new: true,
-    }
+    },
   );
 };
 
@@ -52,5 +60,6 @@ module.exports = {
   findAllAccountsByUser,
   findAccountById,
   updateAccount,
+  updateManyAccounts,
   archiveAccount,
 };

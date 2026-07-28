@@ -1,4 +1,5 @@
 const accountRepository = require("../repositories/account.repository");
+const AppError = require("../utils/AppError");
 
 const createAccount = async (userId, payload) => {
   // Normalize Data
@@ -51,6 +52,70 @@ const createAccount = async (userId, payload) => {
   return await accountRepository.createAccount(accountData);
 };
 
+const getAllAccounts = async (userId) => {
+  const accounts = await accountRepository.findAllAccountsByUser(userId);
+  return accounts;
+};
+
+const getAccountById = async (id, userId) => {
+  const account = await accountRepository.findAccountById(id, userId);
+  if (!account) {
+    throw new AppError("Account not found.", 404);
+  }
+  return account;
+};
+
+const updateAccount = async (id, userId, payload) => {
+  const account = await accountRepository.findAccountById(id, userId);
+
+  if (!account) {
+    throw new AppError("Account not found.", 404);
+  }
+  const allowedFields = ["accountName", "bankName", "subType"];
+
+  const updateData = {};
+
+  allowedFields.forEach((field) => {
+    if (payload[field] !== undefined) {
+      updateData[field] = payload[field];
+    }
+  });
+
+  return await accountRepository.updateAccount(id, updateData);
+};
+
+const changeDefaultAccount = async (accountId, userId) => {
+  // Step 1: Check account exists
+  const account = await accountRepository.findAccountById(accountId, userId);
+
+  if (!account) {
+    throw new AppError("Account not found.", 404);
+  }
+
+  // Step 2: Remove old default account
+  await accountRepository.updateManyAccounts(
+    {
+      user: userId,
+      isDefault: true,
+      isActive: true,
+    },
+    {
+      isDefault: false,
+    },
+  );
+
+  // Step 3: Make selected account default
+  const updatedAccount = await accountRepository.updateAccount(accountId, {
+    isDefault: true,
+  });
+
+  return updatedAccount;
+};
+
 module.exports = {
   createAccount,
+  getAllAccounts,
+  getAccountById,
+  updateAccount,
+  changeDefaultAccount,
 };
