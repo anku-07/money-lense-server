@@ -41,9 +41,13 @@ const updateManyAccounts = async (filter, payload) => {
   return await Account.updateMany(filter, payload);
 };
 
-const archiveAccount = async (id) => {
-  return await Account.findByIdAndUpdate(
-    id,
+const archiveAccount = async (id, userId) => {
+  return await Account.findOneAndUpdate(
+    {
+      _id: id,
+      user: userId,
+      isActive: true,
+    },
     {
       isActive: false,
     },

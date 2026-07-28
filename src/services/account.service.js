@@ -112,10 +112,30 @@ const changeDefaultAccount = async (accountId, userId) => {
   return updatedAccount;
 };
 
+const archiveAccount = async (accountId, userId) => {
+  const account = await accountRepository.findAccountById(accountId, userId);
+
+  if (!account) {
+    throw new AppError("Account not found.", 404);
+  }
+
+  if (account.isDefault) {
+    throw new AppError("Default account cannot be archived.", 400);
+  }
+
+  const archivedAccount = await accountRepository.archiveAccount(
+    accountId,
+    userId,
+  );
+
+  return archivedAccount;
+};
+
 module.exports = {
   createAccount,
   getAllAccounts,
   getAccountById,
   updateAccount,
   changeDefaultAccount,
+  archiveAccount
 };

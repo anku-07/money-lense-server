@@ -17,5 +17,6 @@ router.get("/", protect, accountController.getAllAccounts);
 router.get("/:id", protect, accountController.getAccountById);
 router.patch("/:id/default", protect, accountController.changeDefaultAccount);
 router.patch("/:id", protect, accountController.updateAccount);
+router.delete("/:id", protect, accountController.archiveAccount);
 
 module.exports = router;
